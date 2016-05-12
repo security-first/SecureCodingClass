@@ -5,29 +5,26 @@ import socket
 import thread
 import sys
 import subprocess
+import modules
 
 s_main = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-conn_main = None
 registered_connections = {}
 
 def start(host, port, connections):
-    listen_for_connections(host, port, connections)
-    if conn_main:
-        conn_main.close()
-    if s_main:
-        s_main.close()
-    print 'Exiting...'
+    try:
+        listen_for_connections(host, port, connections)
+    except KeyboardInterrupt:
+        print 'Exiting...'
+        exit(0)
 
 def listen_for_connections(host, port, connections):
-    host = ''
-
+    # Set up the socket
     s_main.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
     s_main.bind((host, port))
-
     s_main.listen(connections)
     print 'Socket now listening on port %s' % port
 
+    # Loop forever while listening for incoming student connections
     while True:
         conn_main, addr = (None, None)
 
@@ -35,6 +32,9 @@ def listen_for_connections(host, port, connections):
         conn_main, addr = s_main.accept()
         print 'Handling new connection'
         print 'Connected with ' + addr[0] + ':' + str(addr)
+
+        # "Sessions" are handled per IP Address. At the moment, therefore,
+        # a connection from the same IP address is considered the same user
         if addr[0] in registered_connections.keys():
             registered_connections[addr[0]]['Last-Activity'] = time.strftime('%m/%d/%Y %H:%M:%S')
         else:
@@ -46,15 +46,12 @@ def listen_for_connections(host, port, connections):
 def handle_client(conn_main, address):
     while conn_main:
         try:
-            conn_main.send("root:/root$ ")
-            parameters = conn_main.recv(100)
+            if registered_connections[address]['Current Module'] == 0:
+                modules.phase0(conn_main, address)
         except socket.error:
             conn_main = None
             break
         registered_connections[address]['Last-Activity'] = time.strftime('%m/%d/%Y %H:%M:%S')
-        parameters = parameters.strip()
-        if parameters:
-            print 'Received from client: %s' % parameters
     print 'Disconnected from: %s' % address
 
 
