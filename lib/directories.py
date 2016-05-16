@@ -1,3 +1,11 @@
+class File():
+    def __init__(self, name, parent, contents, viewable_by_user):
+        self.name = name
+        self.parent = parent
+        self.contents = contents
+        self.viewed = False
+        self.viewable_by_user = viewable_by_user
+
 class Directory():
     def __init__(self, name, parent, children):
         self.name = name
@@ -9,6 +17,11 @@ class Directory():
         dir = Directory(name, self, [])
         self.children.append(dir)
         return dir
+
+    def add_file(self, name, contents, viewable_by_user):
+        file = File(name, self, contents, viewable_by_user)
+        self.children.append(file)
+        return file
 
     def is_root(self):
         return self.parent

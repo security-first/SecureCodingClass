@@ -17,27 +17,30 @@ class DirectoryTree():
         return [x.name for x in self.current.children]
 
     def cd(self, target):
-        print '[*] Attempting to change from %s to %s' % (self.current.name, target)
-        if '/' in target: # TO-DO
+        # print '[*] Attempting to change from %s to %s' % (self.current.name, target)
+        if '/' in target:
             temp = self.current
             for dir in target.split('/'):
                 if dir == '.':
                     continue
                 elif dir == '..':
-                    if not temp.is_root():
+                    if temp.parent:
                         temp = temp.parent
                     else:
                         continue
                 else:
-                    if dir in self.current.getChildren():
-                        temp = self.current.children[self.current.children.index(dir)]
-                    else:
+                    if dir and dir in temp.getChildren():
+                        for child in temp.children:
+                            if child.name == dir:
+                                temp = child
+                    elif dir:
                         return '-bash: cd: %s: No such file or directory' % target
-            return None
+            self.current = temp
+            return None # No errors
         elif target == '.': # current directory
             pass
         elif target == '..': # parent directory
-            if not self.current.is_root():
+            if self.current.parent:
                 self.current = self.current.parent
         elif target in self.current.getChildren():
             found = False
@@ -47,7 +50,6 @@ class DirectoryTree():
                     found = True
             if not found:
                 return '-bash: cd: %s: No such file or directory' % target
-        print '[*] Now in directory: %s' % self.current.name
+        # print '[*] Now in directory: %s' % self.current.name
         self.current.visited = True
-        return None
-    
+        return None # No errors

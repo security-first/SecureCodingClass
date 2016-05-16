@@ -37,5 +37,11 @@ Note: the ports above are the default ports. The administrator/instructor dashbo
 ### Phase 0
 This phase tests the student's ability to successfully connect to a remote server via the command line. In addition, the linux commands "ls" and "cd" are tested by allowing the student a small directory structure to navigate. The phase concludes when the student successfully logs out.
 
+### Phase 1
+This phase demonstrates the simple concept of "Principle of Least Privilege". Note with the students that they are currently logged into the server as the "root" or full administrator user. There is a new, confidential log file under /var/log/access_log.log that contains user's passwords and login records (not a best practice on its own, but we will return to that).  Students should display the log file with the new "cat" command. Then, the students should add a new user account using the "adduser" account. When they log back in as the new user, they should try to access the file and verify that the command now fails.
+
 ## Testing
 You can use the test class "test.py" to run unit tests. As of this commit, the program was programmed and tested on Mac OSX 10.11.4.
+```
+python -m unittest test
+```

@@ -5,6 +5,8 @@ import directories, commands
 def phase0(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit']
     dir_tree = commands.DirectoryTree(directories.get_phase_0_tree())
+    if len(user['Progress']) < 1:
+        user['Progress'] = ['0 ls commands executed', '0 cd commands successfully executed']
 
     while True:
         connection.send("\nroot:%s$ " % dir_tree.current_path())
@@ -18,10 +20,7 @@ def phase0(connection, address, user):
             else:
                 if command == 'ls':
                     connection.send('\n'.join(dir_tree.ls()))
-                    if 'ls' in user.keys():
-                        user['ls'] += 1
-                    else:
-                        user['ls'] = 1
+                    user['Progress'][0] = '%s ls commands executed' % (int(user['Progress'][0].split(' ')[0]) + 1)
                 elif command == 'cd':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]
@@ -29,10 +28,7 @@ def phase0(connection, address, user):
                         if result:
                             connection.send(result)
                         else:
-                            if 'cd' in user.keys():
-                                user['cd'] += 1
-                            else:
-                                user['cd'] = 1
+                            user['Progress'][1] = '%s cd commands successfully executed' % (int(user['Progress'][1].split(' ')[0]) + 1)
                 elif command == 'exit':
                     break
     return

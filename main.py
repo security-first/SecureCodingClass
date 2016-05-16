@@ -26,13 +26,13 @@ class admin_server(BaseHTTPRequestHandler):
 						<td>{0}</td> <!-- Name -->
 						<td>{1}</td> <!-- IP Address -->
 						<td>{2}</td> <!-- Current Module -->
-						<td>{3}</td> <!-- Progress -->
+						<td><p>{3}</p></td> <!-- Progress -->
 						<td>{4}</td> <!-- Last Activity -->
 					</tr>
 				'''.format( registered_connections[connection]['Username'],
                             connection,
                             'Module %s' % registered_connections[connection]['Current Module'],
-                            '\n'.join(registered_connections[connection]['Progress']),
+                            '</p><p>'.join(registered_connections[connection]['Progress']),
                             registered_connections[connection]['Last-Activity'] )
 			self.wfile.write(open('./http-files/index.html', 'r').read() % user_data)
 		else:
@@ -83,7 +83,7 @@ def listen_for_connections(host, port, connections):
 				'Current Module': 0,
 				'Username': '',
                 'Last-Activity': time.strftime('%m/%d/%Y %H:%M:%S'),
-                'Progress': []
+                'Progress': [],
 			}
 		thread.start_new_thread(handle_client, (conn_main,addr[0], registered_connections[addr[0]]))
 
@@ -106,7 +106,7 @@ def _print_usage(error=None):
 
 if __name__ == '__main__':
 	default_port = 8888
-	default_host = ''
+	default_host = '127.0.0.1'
 	default_connections = 10 # increase/specify per size of class
 
 	#check for command line arguments to override default values
