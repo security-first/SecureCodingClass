@@ -38,3 +38,22 @@ def get_phase_0_tree():
     root_home.add('Documents')
 
     return root
+
+def get_phase_1_tree():
+    root = Directory('/', None, [])
+    root.visited = True
+    root_home = root.add('root')
+    var = root.add('var')
+    var_log = var.add('log')
+    var_log.add_file('access.log', '''
+        2016-04-03 14:13:34 [AUTHENTICATION] John Smith successfully logged in using the password "P@ssword!"
+        2016-04-03 15:16:12 [AUTHENTICATION] Mary Adams failed to log in using the password "securityR0cks!"
+        2016-04-03 15:16:34 [AUTHENTICATION] Mary Adams successfully logged in using the password "SecurityR0cks!"
+        2016-04-03 16:02:56 [AUTHENTICATION] Matthew Jones failed to log in using the password "B@ltim0re!"
+        2016-04-03 16:03:16 [AUTHENTICATION] Matthew Jones failed to log in using the password "Baltim0re!"
+        2016-04-03 16:03:45 [AUTHENTICATION] Matthew Jones failed to log in using the password "b@ltlm0re!"
+        2016-04-03 16:03:46 [AUTHENTICATION] Matthew Jones's account has been locked out -- 3 unsuccessful attempts 
+    ''', ['root'])
+    root_home.add('Documents')
+
+    return root

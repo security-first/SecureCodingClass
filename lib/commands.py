@@ -31,8 +31,10 @@ class DirectoryTree():
                 else:
                     if dir and dir in temp.getChildren():
                         for child in temp.children:
-                            if child.name == dir:
+                            if child.name == dir and isinstance(child, Directory):
                                 temp = child
+                            elif child.name == dir:
+                                return '-bash: cd: %s: Not a directory' % dir
                     elif dir:
                         return '-bash: cd: %s: No such file or directory' % target
             self.current = temp
@@ -45,9 +47,11 @@ class DirectoryTree():
         elif target in self.current.getChildren():
             found = False
             for child in self.current.children:
-                if child.name == target:
+                if child.name == target and isinstance(child, Directory):
                     self.current = child
                     found = True
+                elif child.name == target:
+                    return '-bash: cd: %s: Not a directory' % target
             if not found:
                 return '-bash: cd: %s: No such file or directory' % target
         # print '[*] Now in directory: %s' % self.current.name

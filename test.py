@@ -69,5 +69,9 @@ class TestPhase0(unittest.TestCase):
         self.tree.cd('var/log')
         self.assertEqual(self.tree.ls(), [])
 
+    def test_command_cd_nonexistent_directory(self):
+        self.assertEqual(self.tree.ls(), ['root', 'var'])
+        self.assertEqual(self.tree.cd('doesnotexist'), '-bash: cd: doesnotexist: No such file or directory')
+
 if __name__ == '__main__':
     unittest.main()

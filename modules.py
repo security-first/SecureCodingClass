@@ -32,3 +32,39 @@ def phase0(connection, address, user):
                 elif command == 'exit':
                     break
     return
+
+def phase1(connection, address, user):
+    permitted_commands = ['ls', 'cd', 'exit', 'adduser', 'cat']
+    dir_tree = commands.DirectoryTree(directories.get_phase_1_tree())
+    if 'ls commands' in user['Progress'][0]:
+        user['Progress'] = ['Read Log file: False', 'Added Standard User: False']
+
+    while True:
+        connection.send("\nroot:%s$ " % dir_tree.current_path())
+        parameters = connection.recv(100)
+        parameters = parameters.strip()
+        if parameters:
+            print 'Received from client: %s' % parameters
+            command = parameters.split(' ')[0]
+            if not command in permitted_commands:
+                connection.send('-bash: %s: command not found' % command)
+            else:
+                if command == 'ls':
+                    connection.send('\n'.join(dir_tree.ls()))
+                elif command == 'cd':
+                    if len(parameters.split(' ')) > 1:
+                        target = parameters.split(' ')[1]
+                        result = dir_tree.cd(target)
+                        if result:
+                            connection.send(result)
+                        else:
+                            pass
+                    else:
+                        pass # in theory, this should return to the user's home directory
+                elif command == 'adduser':
+                    pass # TO-DO
+                elif command == 'cat':
+                    pass #TO-DO
+                elif command == 'exit':
+                    break
+    return
