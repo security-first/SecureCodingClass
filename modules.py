@@ -9,9 +9,8 @@ def phase0(connection, address, user):
         user['Progress'] = ['0 ls commands executed', '0 cd commands successfully executed']
 
     while True:
-        connection.send("\nroot:%s$ " % dir_tree.current_path())
-        parameters = connection.recv(100)
-        parameters = parameters.strip()
+        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path())
+        parameters = connection.recv(100).strip()
         if parameters:
             print 'Received from client: %s' % parameters
             command = parameters.split(' ')[0]
@@ -23,7 +22,7 @@ def phase0(connection, address, user):
                     user['Progress'][0] = '%s ls commands executed' % (int(user['Progress'][0].split(' ')[0]) + 1)
                 elif command == 'cd':
                     if len(parameters.split(' ')) > 1:
-                        target = parameters.split(' ')[1]
+                        target = parameters.split(' ')[1] # ignores second, third, etc. parameters
                         result = dir_tree.cd(target)
                         if result:
                             connection.send(result)
@@ -40,9 +39,8 @@ def phase1(connection, address, user):
         user['Progress'] = ['Read Log file: False', 'Added Standard User: False']
 
     while True:
-        connection.send("\nroot:%s$ " % dir_tree.current_path())
-        parameters = connection.recv(100)
-        parameters = parameters.strip()
+        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path())
+        parameters = connection.recv(100).strip()
         if parameters:
             print 'Received from client: %s' % parameters
             command = parameters.split(' ')[0]
@@ -53,7 +51,7 @@ def phase1(connection, address, user):
                     connection.send('\n'.join(dir_tree.ls()))
                 elif command == 'cd':
                     if len(parameters.split(' ')) > 1:
-                        target = parameters.split(' ')[1]
+                        target = parameters.split(' ')[1] #ignores any second, third, etc. parameters
                         result = dir_tree.cd(target)
                         if result:
                             connection.send(result)
@@ -64,7 +62,14 @@ def phase1(connection, address, user):
                 elif command == 'adduser':
                     pass # TO-DO
                 elif command == 'cat':
-                    pass #TO-DO
+                    if len(parameters.split(' ')) > 1:
+                        target = parameters.split(' ')[1]
+                        result = dir_tree.cat(target)
+                        if 'AUTHENTICATION' in result:
+                            temp = user['Progress'].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][0] = ' '.join(temp)
+                        connection.send(result)
                 elif command == 'exit':
                     break
     return

@@ -1,3 +1,5 @@
+from directories import *
+
 class DirectoryTree():
     def __init__(self, directory):
         self.current = directory
@@ -16,6 +18,9 @@ class DirectoryTree():
     def ls(self):
         return [x.name for x in self.current.children]
 
+    # Emulates the basic "cd" linux command
+    # Input: target directory
+    # Output: If error, outputs error message. Else, outputs None
     def cd(self, target):
         # print '[*] Attempting to change from %s to %s' % (self.current.name, target)
         if '/' in target:
@@ -57,3 +62,14 @@ class DirectoryTree():
         # print '[*] Now in directory: %s' % self.current.name
         self.current.visited = True
         return None # No errors
+
+    # Emulates the linux "cat" command (wrt reading text files, no concatenation yet)
+    # Input: Target file
+    # Output: The contents of that file, if it exists, or the error message if it does not
+    def cat(self, file):
+        if file in self.current.getChildren() and isinstance(file, File): # has to be in current directory
+            return file.contents
+        elif file in self.current.getChildren():
+            return 'cat: %s: Is a directory' % file
+        else:
+            return '-bash: cd: %s: No such file or directory' % file

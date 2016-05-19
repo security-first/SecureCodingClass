@@ -84,6 +84,7 @@ def listen_for_connections(host, port, connections):
 				'Username': '',
                 'Last-Activity': time.strftime('%m/%d/%Y %H:%M:%S'),
                 'Progress': [],
+				'Name': 'root',
 			}
 		thread.start_new_thread(handle_client, (conn_main,addr[0], registered_connections[addr[0]]))
 
@@ -92,6 +93,9 @@ def handle_client(conn_main, address, user):
 		if registered_connections[address]['Current Module'] == 0:
 			modules.phase0(conn_main, address, user)
 			user['Current Module'] = 1
+		elif registered_connections[address]['Current Module'] == 1:
+			modules.phase1(conn_main, address, user)
+			user['Current Module'] = 2
 	except socket.error:
 		pass
 	registered_connections[address]['Last-Activity'] = time.strftime('%m/%d/%Y %H:%M:%S')
