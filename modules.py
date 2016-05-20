@@ -9,7 +9,7 @@ def phase0(connection, address, user):
         user['Progress'] = ['0 ls commands executed', '0 cd commands successfully executed']
 
     while True:
-        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path())
+        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
         parameters = connection.recv(100).strip()
         if parameters:
             print 'Received from client: %s' % parameters
@@ -39,7 +39,7 @@ def phase1(connection, address, user):
         user['Progress'] = ['Read Log file: False', 'Added Standard User: False']
 
     while True:
-        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path())
+        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
         parameters = connection.recv(100).strip()
         if parameters:
             print 'Received from client: %s' % parameters
@@ -64,9 +64,9 @@ def phase1(connection, address, user):
                 elif command == 'cat':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]
-                        result = dir_tree.cat(target)
+                        result = dir_tree.cat(target, user)
                         if 'AUTHENTICATION' in result:
-                            temp = user['Progress'].split(' ')
+                            temp = user['Progress'][0].split(' ')
                             temp[-1] = 'True'
                             user['Progress'][0] = ' '.join(temp)
                         connection.send(result)

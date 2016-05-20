@@ -52,8 +52,8 @@ def get_phase_1_tree():
         2016-04-03 16:02:56 [AUTHENTICATION] Matthew Jones failed to log in using the password "B@ltim0re!"
         2016-04-03 16:03:16 [AUTHENTICATION] Matthew Jones failed to log in using the password "Baltim0re!"
         2016-04-03 16:03:45 [AUTHENTICATION] Matthew Jones failed to log in using the password "b@ltlm0re!"
-        2016-04-03 16:03:46 [AUTHENTICATION] Matthew Jones's account has been locked out -- 3 unsuccessful attempts 
-    ''', ['root'])
+        2016-04-03 16:03:46 [AUTHENTICATION] Matthew Jones's account has been locked out -- 3 unsuccessful attempts
+    ''', 'root')
     root_home.add('Documents')
 
     return root

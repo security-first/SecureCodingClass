@@ -66,10 +66,14 @@ class DirectoryTree():
     # Emulates the linux "cat" command (wrt reading text files, no concatenation yet)
     # Input: Target file
     # Output: The contents of that file, if it exists, or the error message if it does not
-    def cat(self, file):
-        if file in self.current.getChildren() and isinstance(file, File): # has to be in current directory
-            return file.contents
-        elif file in self.current.getChildren():
-            return 'cat: %s: Is a directory' % file
+    def cat(self, filename, user):
+        if filename in self.current.getChildren(): # has to be in current directory
+            for file in self.current.children:
+                if isinstance(file, File) and ('all' in file.viewable_by_user or user['Name'] in file.viewable_by_user):
+                    return file.contents
+                elif isinstance(file, File):
+                    return 'cat: %s: Permission denied' % filename
+        elif filename in self.current.getChildren():
+            return 'cat: %s: Is a directory' % filename
         else:
-            return '-bash: cd: %s: No such file or directory' % file
+            return '-bash: cd: %s: No such file or directory' % filename

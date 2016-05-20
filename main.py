@@ -29,7 +29,7 @@ class admin_server(BaseHTTPRequestHandler):
 						<td><p>{3}</p></td> <!-- Progress -->
 						<td>{4}</td> <!-- Last Activity -->
 					</tr>
-				'''.format( registered_connections[connection]['Username'],
+				'''.format( registered_connections[connection]['Name'],
                             connection,
                             'Module %s' % registered_connections[connection]['Current Module'],
                             '</p><p>'.join(registered_connections[connection]['Progress']),
@@ -81,7 +81,6 @@ def listen_for_connections(host, port, connections):
 		else:
 			registered_connections[addr[0]] = {
 				'Current Module': 0,
-				'Username': '',
                 'Last-Activity': time.strftime('%m/%d/%Y %H:%M:%S'),
                 'Progress': [],
 				'Name': 'root',
