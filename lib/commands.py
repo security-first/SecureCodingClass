@@ -1,8 +1,12 @@
 from directories import *
 
 class DirectoryTree():
-    def __init__(self, directory):
-        self.current = directory
+    def __init__(self, directory, current=None):
+        if current:
+            self.current = current
+        else:
+            self.current = directory
+        self.root = directory
 
     def current_path(self):
         path = [self.current.name]
@@ -11,6 +15,21 @@ class DirectoryTree():
             temp = temp.parent
             path.insert(0, temp.name)
         return '/'.join(path)
+
+    # Kind of emulates the basic "mkdir" linux command (Needs more work)
+    def mkdir(self, new_dir, parent='.'):
+        if '/' in new_dir:
+            # needs implementing
+            return None
+        else:
+            if parent == '.':
+                self.current.add(new_dir)
+            else:
+                p = self.root.find_by_name(parent)
+                if p:
+                    p.add(new_dir)
+                else:
+                    return None
 
     # Emulates the basic "ls" linux command (without flags)
     # Input: None
@@ -64,7 +83,7 @@ class DirectoryTree():
         return None # No errors
 
     # Emulates the linux "cat" command (wrt reading text files, no concatenation yet)
-    # Input: Target file
+    # Input: Target file, username
     # Output: The contents of that file, if it exists, or the error message if it does not
     def cat(self, filename, user):
         if filename in self.current.getChildren(): # has to be in current directory
@@ -77,3 +96,20 @@ class DirectoryTree():
             return 'cat: %s: Is a directory' % filename
         else:
             return '-bash: cd: %s: No such file or directory' % filename
+
+    # Emulates the "adduser" linux command (took some shortcuts though)
+    # Input: Current user; username to add
+    # Output: New user setup messages; Error message if not
+    def adduser(self, current_user, new_user):
+        if not current_user == 'root':
+            return [False, '-bash: adduser %s: Permission denied' % new_user] # unsuccessful
+        else:
+            return [True, '''
+Adding user '{0}' ...
+Adding new group '{0}' (1001) ...
+Adding new user '{0}' (1001) with group '{0}' ...
+Creating home directory '/home/{0}' ...
+Copying files from '/etc/skel' ...
+passwd: password updated successfully
+Changing the user information for {0}
+            ''']

@@ -60,7 +60,19 @@ def phase1(connection, address, user):
                     else:
                         pass # in theory, this should return to the user's home directory
                 elif command == 'adduser':
-                    pass # TO-DO
+                    if len(parameters.split(' ')) > 1:
+                        new_user = parameters.split(' ')[1]
+                        result = dir_tree.add_user(user['Name'], new_user)
+                        if result[0]:
+                            # create home directory
+                            user['Name'] = new_user.lower().replace(' ', '')
+                            dir_tree.mkdir(user['Name'], parent='home')
+                            temp = user['Progress'][1].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][1] = ' '.join(temp)
+                            connection.send(result)
+                        else:
+                            connection.send(result)
                 elif command == 'cat':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]
