@@ -41,6 +41,9 @@ This phase tests the student's ability to successfully connect to a remote serve
 ### Phase 1 (Principle of Least Privilege)
 This phase demonstrates the simple concept of "Principle of Least Privilege". Note with the students that they are currently logged into the server as the "root" or full administrator user. There is a new, confidential log file under /var/log/access_log.log that contains user's passwords and login records (not a best practice on its own, but we will return to that).  Students should display the log file with the new "cat" command. Then, the students should add a new user account using the "adduser" account. When they log back in as the new user, they should try to access the file and verify that the command now fails.
 
+### Phase 2 (The Myth of "Security through Obfuscation")
+This phase demonstrates the myth of "Security through Obfuscation". The idea of the phase is to find the hidden file (hidden because the filename includes a "." before the name) somewhere in the file system. Then, the goal is to find the password hidden within the discovered file. The linux command "ls" can now use the "-a" flag to list hidden files and the phase also includes the new command "grep" for searching through file contents.
+
 ## Testing
 You can use the test class "test.py" to run unit tests. As of this commit, the program was programmed and tested on Mac OSX 10.11.4.
 ```

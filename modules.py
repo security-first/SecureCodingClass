@@ -62,7 +62,7 @@ def phase1(connection, address, user):
                 elif command == 'adduser':
                     if len(parameters.split(' ')) > 1:
                         new_user = parameters.split(' ')[1]
-                        result = dir_tree.add_user(user['Name'], new_user)
+                        result = dir_tree.adduser(user['Name'], new_user)
                         if result[0]:
                             # create home directory
                             user['Name'] = new_user.lower().replace(' ', '')
@@ -70,9 +70,63 @@ def phase1(connection, address, user):
                             temp = user['Progress'][1].split(' ')
                             temp[-1] = 'True'
                             user['Progress'][1] = ' '.join(temp)
+                            connection.send(result[1])
+                        else:
+                            connection.send(result[1])
+                elif command == 'cat':
+                    if len(parameters.split(' ')) > 1:
+                        target = parameters.split(' ')[1]
+                        result = dir_tree.cat(target, user)
+                        if 'AUTHENTICATION' in result:
+                            temp = user['Progress'][0].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][0] = ' '.join(temp)
+                        connection.send(result)
+                elif command == 'exit':
+                    break
+    return
+
+def phase2(connection, address, user):
+    permitted_commands = ['ls', 'cd', 'exit', 'adduser', 'cat']
+    dir_tree = commands.DirectoryTree(directories.get_phase_1_tree())
+    if 'ls commands' in user['Progress'][0]:
+        user['Progress'] = ['Read Log file: False', 'Added Standard User: False']
+
+    while True:
+        connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
+        parameters = connection.recv(100).strip()
+        if parameters:
+            print 'Received from client: %s' % parameters
+            command = parameters.split(' ')[0]
+            if not command in permitted_commands:
+                connection.send('-bash: %s: command not found' % command)
+            else:
+                if command == 'ls':
+                    connection.send('\n'.join(dir_tree.ls()))
+                elif command == 'cd':
+                    if len(parameters.split(' ')) > 1:
+                        target = parameters.split(' ')[1] #ignores any second, third, etc. parameters
+                        result = dir_tree.cd(target)
+                        if result:
                             connection.send(result)
                         else:
-                            connection.send(result)
+                            pass
+                    else:
+                        pass # in theory, this should return to the user's home directory
+                elif command == 'adduser':
+                    if len(parameters.split(' ')) > 1:
+                        new_user = parameters.split(' ')[1]
+                        result = dir_tree.adduser(user['Name'], new_user)
+                        if result[0]:
+                            # create home directory
+                            user['Name'] = new_user.lower().replace(' ', '')
+                            dir_tree.mkdir(user['Name'], parent='home')
+                            temp = user['Progress'][1].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][1] = ' '.join(temp)
+                            connection.send(result[1])
+                        else:
+                            connection.send(result[1])
                 elif command == 'cat':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]

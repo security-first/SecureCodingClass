@@ -91,10 +91,12 @@ def handle_client(conn_main, address, user):
 	try:
 		if registered_connections[address]['Current Module'] == 0:
 			modules.phase0(conn_main, address, user)
-			user['Current Module'] = 1
 		elif registered_connections[address]['Current Module'] == 1:
 			modules.phase1(conn_main, address, user)
-			user['Current Module'] = 2
+		elif registered_connections[address]['Current Module'] == 2:
+			modules.phase2(conn_main, address, user)
+
+		user['Current Module'] += 1
 	except socket.error:
 		pass
 	registered_connections[address]['Last-Activity'] = time.strftime('%m/%d/%Y %H:%M:%S')
@@ -108,7 +110,7 @@ def _print_usage(error=None):
 	exit(0)
 
 if __name__ == '__main__':
-	default_port = 8888
+	default_port = 8889
 	default_host = '127.0.0.1'
 	default_connections = 10 # increase/specify per size of class
 
