@@ -75,3 +75,14 @@ def get_phase_1_tree():
     root_home.add('Documents')
 
     return root
+
+def get_phase_2_tree(user_name):
+    root = Directory('/', None, [])
+    root.visited = True
+    root_home = root.add('root')
+    home = root.add('home')
+    home.add(user_name)
+    var = root.add('var')
+    var_log = var.add('log')
+
+    return root

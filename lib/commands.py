@@ -34,8 +34,11 @@ class DirectoryTree():
     # Emulates the basic "ls" linux command (without flags)
     # Input: None
     # Output: Returns all of the children names of the current directory
-    def ls(self):
-        return [x.name for x in self.current.children]
+    def ls(self, hidden=False):
+        if hidden:
+            return [x.name for x in self.current.children]
+        else:
+            return [x.name for x in self.current.children if not x.name.startswith('.')]
 
     # Emulates the basic "cd" linux command
     # Input: target directory
@@ -64,23 +67,27 @@ class DirectoryTree():
             self.current = temp
             return None # No errors
         elif target == '.': # current directory
-            pass
+            return None
         elif target == '..': # parent directory
             if self.current.parent:
                 self.current = self.current.parent
-        elif target in self.current.getChildren():
-            found = False
-            for child in self.current.children:
-                if child.name == target and isinstance(child, Directory):
-                    self.current = child
-                    found = True
-                elif child.name == target:
-                    return '-bash: cd: %s: Not a directory' % target
-            if not found:
+            return None
+        else:
+            if target in self.current.getChildren():
+                found = False
+                for child in self.current.children:
+                    if child.name == target and isinstance(child, Directory):
+                        self.current = child
+                        found = True
+                    elif child.name == target:
+                        return '-bash: cd: %s: Not a directory' % target
+                if not found:
+                    return '-bash: cd: %s: No such file or directory' % target
+                else:
+                    self.current.visited = True
+                    return None # No errors
+            else:
                 return '-bash: cd: %s: No such file or directory' % target
-        # print '[*] Now in directory: %s' % self.current.name
-        self.current.visited = True
-        return None # No errors
 
     # Emulates the linux "cat" command (wrt reading text files, no concatenation yet)
     # Input: Target file, username
