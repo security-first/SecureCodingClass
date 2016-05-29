@@ -84,7 +84,6 @@ class DirectoryTree():
                 if not found:
                     return '-bash: cd: %s: No such file or directory' % target
                 else:
-                    self.current.visited = True
                     return None # No errors
             else:
                 return '-bash: cd: %s: No such file or directory' % target
@@ -95,16 +94,18 @@ class DirectoryTree():
     def cat(self, filename, user):
         if filename in self.current.getChildren(): # has to be in current directory
             for file in self.current.children:
-                if isinstance(file, File) and ('all' in file.viewable_by_user or user['Name'] in file.viewable_by_user):
+                if file.name == filename and isinstance(file, File) and ('all' in file.viewable_by_user or user in file.viewable_by_user):
                     return file.contents
-                elif isinstance(file, File):
+                elif file.name == filename and isinstance(file, File):
                     return 'cat: %s: Permission denied' % filename
+                else:
+                    continue
         elif filename in self.current.getChildren():
             return 'cat: %s: Is a directory' % filename
         else:
             return '-bash: cd: %s: No such file or directory' % filename
 
-    # Emulates the "adduser" linux command (took some shortcuts though)
+    # Emulates the "adduser" linux command (took some shortcuts though - results are mostly static)
     # Input: Current user; username to add
     # Output: New user setup messages; Error message if not
     def adduser(self, current_user, new_user):
@@ -120,3 +121,24 @@ Copying files from '/etc/skel' ...
 passwd: password updated successfully
 Changing the user information for {0}
             '''.format(new_user)]
+
+    # Emulates the "grep" linux command
+    # Input: Pattern; filename
+    # Output: Typical grep output, or error message
+    def grep(self, pattern, filename, username):
+        if filename in self.current.getChildren():
+            for file in self.current.children:
+                if file.name == filename and isinstance(file, File) and ('all' in file.viewable_by_user or username in file.viewable_by_user):
+                    results = []
+                    for line in file.contents.split('\n'):
+                        if pattern in line:
+                            results.append(line)
+                    return '\n'.join(results)
+                elif file.name == filename and isinstance(file, File):
+                    return 'grep: %s: Permission denied' % filename
+                elif file.name == filename:
+                    return 'grep: %s: Is a directory' % filename
+                else:
+                    continue
+        else:
+            return 'grep: %s: No such file or directory' % filename

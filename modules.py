@@ -76,7 +76,7 @@ def phase1(connection, address, user):
                 elif command == 'cat':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]
-                        result = dir_tree.cat(target, user)
+                        result = dir_tree.cat(target, user['Name'])
                         if 'AUTHENTICATION' in result:
                             temp = user['Progress'][0].split(' ')
                             temp[-1] = 'True'
@@ -91,7 +91,7 @@ def phase2(connection, address, user):
     username = user['Name'].lower().replace(' ', '')
     root = directories.get_phase_2_tree(username)
     dir_tree = commands.DirectoryTree(root, current= root.find_by_name(username))
-    if 'ls commands' in user['Progress'][0]:
+    if 'Read Log file' in user['Progress'][0]:
         user['Progress'] = ['Found Hidden File: False', 'Found Hidden Password: False']
 
     while True:
@@ -104,8 +104,13 @@ def phase2(connection, address, user):
                 connection.send('-bash: %s: command not found' % command)
             else:
                 if command == 'ls':
-                    if parameters.split(' ')[1] == '-a':
-                        connection.send('\n'.join(dir_tree.ls(hidden=True)))
+                    if len(parameters.split(' ')) > 1 and parameters.split(' ')[1] == '-a':
+                        results = '\n'.join(dir_tree.ls(hidden=True))
+                        connection.send(results)
+                        if '.secrets.txt' in results:
+                            temp = user['Progress'][0].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][0] = ' '.join(temp)
                     else:
                         connection.send('\n'.join(dir_tree.ls()))
                 elif command == 'cd':
@@ -126,8 +131,16 @@ def phase2(connection, address, user):
                 elif command == 'cat':
                     if len(parameters.split(' ')) > 1:
                         target = parameters.split(' ')[1]
-                        result = dir_tree.cat(target, user)
+                        result = dir_tree.cat(target, user['Name'])
                         connection.send(result)
+                elif command == 'grep':
+                    if len(parameters.split(' ')) == 3:
+                        target_word = parameters.split(' ')[1]
+                        target_file = parameters.split(' ')[2]
+                        result = dir_tree.grep(target_word, target_file, user['Name'])
+                        connection.send(result)
+                    else:
+                        connection.send('usage: grep [pattern] [file ...]')
                 elif command == 'exit':
                     break
     return

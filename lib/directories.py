@@ -11,7 +11,6 @@ class Directory():
         self.name = name
         self.parent = parent
         self.children = children
-        self.visited = False
 
     def add(self, name):
         dir = Directory(name, self, [])
@@ -46,7 +45,6 @@ class Directory():
 
 def get_phase_0_tree():
     root = Directory('/', None, [])
-    root.visited = True
     root_home = root.add('root')
     var = root.add('var')
     var_log = var.add('log')
@@ -56,7 +54,6 @@ def get_phase_0_tree():
 
 def get_phase_1_tree():
     root = Directory('/', None, [])
-    root.visited = True
     root_home = root.add('root')
     root.add('home')
     var = root.add('var')
@@ -71,18 +68,25 @@ def get_phase_1_tree():
 2016-04-03 16:03:45 [AUTHENTICATION] Matthew Jones failed to log in using the password "b@ltlm0re!"
 2016-04-03 16:03:46 [AUTHENTICATION] Matthew Jones's account has been locked out -- 3 unsuccessful attempts
 
-    ''', 'root')
+    ''', ['root'])
     root_home.add('Documents')
 
     return root
 
 def get_phase_2_tree(user_name):
     root = Directory('/', None, [])
-    root.visited = True
     root_home = root.add('root')
     home = root.add('home')
     home.add(user_name)
     var = root.add('var')
+    var.add('mail')
+    var.add('lib')
+    var.add('backups')
     var_log = var.add('log')
+    usr = root.add('usr')
+    usr.add_file('.secrets.txt', '1000101\n'*750 + 'password=securityisfun\n' + '10011101\n'*1500, ['all'])
+    usr.add('bin')
+    usr.add('lib')
+    usr.add('sbin')
 
     return root
