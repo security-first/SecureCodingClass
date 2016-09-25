@@ -1,6 +1,9 @@
 #!/usr/bin/python
-
+import logging
 import directories, commands
+
+logger = logging.getLogger('secure_class')
+
 
 def phase0(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit']
@@ -11,6 +14,7 @@ def phase0(connection, address, user):
     while True:
         connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
         parameters = connection.recv(100).strip()
+        logger.info('Received from %s (%s): %s' % (user['Name'], address, parameters))
         if parameters:
             print 'Received from client: %s' % parameters
             command = parameters.split(' ')[0]
@@ -32,6 +36,7 @@ def phase0(connection, address, user):
                     break
     return
 
+
 def phase1(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit', 'adduser', 'cat']
     dir_tree = commands.DirectoryTree(directories.get_phase_1_tree())
@@ -41,6 +46,7 @@ def phase1(connection, address, user):
     while True:
         connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
         parameters = connection.recv(100).strip()
+        logger.info('Received from %s (%s): %s' % (user['Name'], address, parameters))
         if parameters:
             print 'Received from client: %s' % parameters
             command = parameters.split(' ')[0]
@@ -51,7 +57,7 @@ def phase1(connection, address, user):
                     connection.send('\n'.join(dir_tree.ls()))
                 elif command == 'cd':
                     if len(parameters.split(' ')) > 1:
-                        target = parameters.split(' ')[1] #ignores any second, third, etc. parameters
+                        target = parameters.split(' ')[1] # ignores any second, third, etc. parameters
                         result = dir_tree.cd(target)
                         if result:
                             connection.send(result)
@@ -86,17 +92,19 @@ def phase1(connection, address, user):
                     break
     return
 
+
 def phase2(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit', 'adduser', 'cat', 'grep']
     username = user['Name'].lower().replace(' ', '')
     root = directories.get_phase_2_tree(username)
-    dir_tree = commands.DirectoryTree(root, current= root.find_by_name(username))
+    dir_tree = commands.DirectoryTree(root, current=root.find_by_name(username))
     if 'Read Log file' in user['Progress'][0]:
         user['Progress'] = ['Found Hidden File: False', 'Found Hidden Password: False']
 
     while True:
         connection.send("\n%s:%s$ " % (username, dir_tree.current_path()))
         parameters = connection.recv(100).strip()
+        logger.info('Received from %s (%s): %s' % (user['Name'], address, parameters))
         if parameters:
             print 'Received from client: %s' % parameters
             command = parameters.split(' ')[0]
@@ -115,14 +123,14 @@ def phase2(connection, address, user):
                         connection.send('\n'.join(dir_tree.ls()))
                 elif command == 'cd':
                     if len(parameters.split(' ')) > 1:
-                        target = parameters.split(' ')[1] #ignores any second, third, etc. parameters
+                        target = parameters.split(' ')[1] # ignores any second, third, etc. parameters
                         result = dir_tree.cd(target)
                         if result:
                             connection.send(result)
                         else:
                             pass
                     else:
-                        pass # in theory, this should return to the user's home directory
+                        pass # TODO: this should return to the user's home directory
                 elif command == 'adduser':
                     if len(parameters.split(' ')) > 1:
                         new_user = parameters.split(' ')[1]
@@ -139,6 +147,10 @@ def phase2(connection, address, user):
                         target_file = parameters.split(' ')[2]
                         result = dir_tree.grep(target_word, target_file, user['Name'])
                         connection.send(result)
+                        if 'password=securityisfun' in result:
+                            temp = user['Progress'][1].split(' ')
+                            temp[-1] = 'True'
+                            user['Progress'][1] = ' '.join(temp)
                     else:
                         connection.send('usage: grep [pattern] [file ...]')
                 elif command == 'exit':
