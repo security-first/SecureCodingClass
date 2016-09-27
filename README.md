@@ -44,6 +44,21 @@ This phase demonstrates the simple concept of "Principle of Least Privilege". No
 ### Phase 2 (The Myth of "Security through Obfuscation")
 This phase demonstrates the myth of "Security through Obfuscation". The idea of the phase is to find the hidden file (hidden because the filename includes a "." before the name) somewhere in the file system. Then, the goal is to find the password hidden within the discovered file. The linux command "ls" can now use the "-a" flag to list hidden files and the phase also includes the new command "grep" for searching through file contents.
 
+### Phase 3 (Strong Passwords) -- TODO
+This phase teaches students how to execute programs/scripts in the Linux file system. The script that the students execute is a "testPassword.py" script that takes a "password" as a command line argument and calculates how long a computer requires to brute-force the password provided.
+
+### Phase 4 (Encrypt! Encrypt! Encrypt!) -- TODO
+This phase teaches students the "tcpdump" application and demonstrates to students how network traffic can be sniffed. Students are asked to compare encrypted vs. unencrypted traffic.
+
+### Phase 5 (Command Injection) -- TODO
+This phase again asks students to execute a script. This basic script executes as a privileged user and contains a command injection vulnerability whereby students can execute commands as the root user.
+
+### Phase 6 (Buffer Overflow) -- TODO
+This phase again asks students to execute a script. Whereas the previous script contained a command injection vulnerability, this script contains a buffer overflow vulnerability.
+
+### Phase 7 (SQL Injection) -- TODO
+We now leave the command line and move to web applications. Students are presented a login page with a login form that is vulnerable to SQL injection.
+
 ## Testing
 You can use the test class "test.py" to run unit tests. As of this commit, the program was programmed and tested on Mac OSX 10.11.4.
 ```
