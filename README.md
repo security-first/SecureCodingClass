@@ -15,6 +15,9 @@ This program is built as a server that emulates a linux command line session. St
 Why not simply use Linux Virtual Machines and simple scripts?
 Because Virtual Machines are prone to problems and bugs with configurations and installations. Moreover, it is impossible to track student progress when all of their work is done in a Virtual Machine. This program, with the accompanying teacher's dashboard, will maintain progress and records in real time so that teachers will know when to slow down and review and when to quickly proceed.
 
+### Instructor Dashboard
+![Alt text](img/Instructor-Dashboard.png?raw=true "Instructor Dashboard")
+
 ## Installation/Running the program
 Requires: Python 2.7.8 (that is what it was developed in)
 All modules used are native to python-2.7.8

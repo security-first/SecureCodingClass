@@ -11,11 +11,11 @@ import modules
 
 s_main = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 registered_connections = {}
-logger = logging.getLogger('secure_class')
-logger.basicConfig(format='%(asctime)s - %(levelname): %(message)s',
+logging.basicConfig(format='%(asctime)s - %(levelname) - %(message)s',
 					datefmt='%m/%d/%Y %I:%M:%S %p',
 					filename='events.log',
 					level=logging.DEBUG)
+logger = logging.getLogger('secure_class')
 
 
 # Purpose: Defines server for presenting student data (i.e. progress through the modules, activity, etc.)
@@ -54,9 +54,9 @@ class AdminServer(BaseHTTPRequestHandler):
 def _print(msg, level='INFO'):
 	print msg
 	if level == 'CRITICAL':
-		logger.critical(msg)
+		logger.critical(msg, exc_info=True)
 	elif level == 'ERROR':
-		logger.error(msg)
+		logger.error(msg, exc_info=True)
 	elif level == 'WARNING':
 		logger.warning(msg)
 	elif level == 'DEBUG':
@@ -65,10 +65,10 @@ def _print(msg, level='INFO'):
 		logger.info(msg)
 
 def webserver():
-	server_address = ('127.0.0.1', 8443) # Only available on the loopback interface - TODO: make port number customizable
+	server_address = ('127.0.0.1', 8443)  # Only available on the loopback interface - TODO: make port number customizable
 	httpd = HTTPServer(server_address, AdminServer)
 	sa = httpd.socket.getsockname()
-	_print("Serving Instructor dashboard on %s:%s" % (sa[0], sa[1]), level='DEBUG')
+	_print("Serving Instructor dashboard on {0}:{1}".format(sa[0], sa[1]), level='DEBUG')
 	httpd.serve_forever()
 	return
 
