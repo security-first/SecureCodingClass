@@ -4,6 +4,7 @@ import time
 import socket
 import thread
 import sys
+import csv
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import logging
 sys.path.insert(0, './lib') # inserting first to avoid name clashes
@@ -78,6 +79,39 @@ def start(host, port, connections):
 		thread.start_new_thread(webserver, ())
 		listen_for_connections(host, port, connections)
 	except KeyboardInterrupt:
+		output_results = raw_input('Would you like to save student data? [Y/N]')
+		if output_results.strip().lower() == 'y':
+			output_file = raw_input('Filename (student-results.csv is default): ')
+			if not output_file.strip():
+				output_file = 'student-results.csv'
+			with open(output_file, 'wb') as csvfile:
+				writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+				header = [
+					'Student Name',
+					'IP Address',
+					'Modules Completed',
+					'Modules Available',
+					'Module 1 Results',
+					'Module 2 Results',
+					'Module 3 Results',
+					'Module 4 Results',
+					'Module 5 Results',
+					'Module 6 Results',
+					'Module 7 Results'
+				]
+				writer.writerow(header)
+				for ip in registered_connections.keys():
+					student_results = [
+						registered_connections[ip]['Name'],
+						ip
+					]
+					for results in registered_connections[ip]['Progress']:
+						student_results.append('\r\n'.join(results))
+
+					writer.writerow(student_results)
+			_print('Student data saved successfully')
+		else:
+			_print('Discarding student data')
 		_print('Exiting...')
 		exit(0)
 
@@ -111,13 +145,14 @@ def listen_for_connections(host, port, connections):
 				'Name': 'root',
 			}
 			logger.info('Creating new user for connection from %s' % addr[0])
-		thread.start_new_thread(handle_client, (conn_main,addr[0], registered_connections[addr[0]]))
+		thread.start_new_thread(handle_client, (conn_main, addr[0], registered_connections[addr[0]]))
 
 
 # I: Connection handler, IP Address, and User Data
 # O: Configures the appropriate module per user
 def handle_client(conn_main, address, user):
 	try:
+		user['Progress'].append([])
 		if registered_connections[address]['Current Module'] == 0:
 			modules.phase0(conn_main, address, user)
 		elif registered_connections[address]['Current Module'] == 1:
