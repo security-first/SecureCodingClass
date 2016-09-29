@@ -47,7 +47,7 @@ def get_phase_0_tree():
     root = Directory('/', None, [])
     root_home = root.add('root')
     var = root.add('var')
-    var_log = var.add('log')
+    var.add('log')
     root_home.add('Documents')
 
     return root
@@ -75,14 +75,32 @@ def get_phase_1_tree():
 
 def get_phase_2_tree(user_name):
     root = Directory('/', None, [])
-    root_home = root.add('root')
+    root.add('root')
     home = root.add('home')
     home.add(user_name)
     var = root.add('var')
     var.add('mail')
     var.add('lib')
     var.add('backups')
-    var_log = var.add('log')
+    var.add('log')
+    usr = root.add('usr')
+    usr.add_file('.secrets.txt', '1000101\n'*750 + 'password=securityisfun\n' + '10011101\n'*1500, ['all'])
+    usr.add('bin')
+    usr.add('lib')
+    usr.add('sbin')
+
+    return root
+
+def get_phase_3_tree(user_name):
+    root = Directory('/', None, [])
+    root.add('root')
+    home = root.add('home')
+    home.add(user_name)
+    var = root.add('var')
+    var.add('mail')
+    var.add('lib')
+    var.add('backups')
+    var.add('log')
     usr = root.add('usr')
     usr.add_file('.secrets.txt', '1000101\n'*750 + 'password=securityisfun\n' + '10011101\n'*1500, ['all'])
     usr.add('bin')

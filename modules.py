@@ -8,8 +8,7 @@ logger = logging.getLogger('secure_class')
 def phase0(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit']
     dir_tree = commands.DirectoryTree(directories.get_phase_0_tree())
-    if len(user['Progress']) < 1:
-        user['Progress'] = ['0 ls commands executed', '0 cd commands successfully executed']
+    user['Progress'][-1] = ['0 ls commands executed', '0 cd commands successfully executed']
 
     while True:
         connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
@@ -40,8 +39,7 @@ def phase0(connection, address, user):
 def phase1(connection, address, user):
     permitted_commands = ['ls', 'cd', 'exit', 'adduser', 'cat']
     dir_tree = commands.DirectoryTree(directories.get_phase_1_tree())
-    if 'ls commands' in user['Progress'][0]:
-        user['Progress'] = ['Read Log file: False', 'Added Standard User: False']
+    user['Progress'][-1] = ['Read Log file: False', 'Added Standard User: False']
 
     while True:
         connection.send("\n%s:%s$ " % (user['Name'].lower().replace(' ', ''), dir_tree.current_path()))
@@ -98,8 +96,7 @@ def phase2(connection, address, user):
     username = user['Name'].lower().replace(' ', '')
     root = directories.get_phase_2_tree(username)
     dir_tree = commands.DirectoryTree(root, current=root.find_by_name(username))
-    if 'Read Log file' in user['Progress'][0]:
-        user['Progress'] = ['Found Hidden File: False', 'Found Hidden Password: False']
+    user['Progress'][-1] = ['Found Hidden File: False', 'Found Hidden Password: False']
 
     while True:
         connection.send("\n%s:%s$ " % (username, dir_tree.current_path()))

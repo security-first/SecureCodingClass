@@ -16,11 +16,10 @@ Why not simply use Linux Virtual Machines and simple scripts?
 Because Virtual Machines are prone to problems and bugs with configurations and installations. Moreover, it is impossible to track student progress when all of their work is done in a Virtual Machine. This program, with the accompanying teacher's dashboard, will maintain progress and records in real time so that teachers will know when to slow down and review and when to quickly proceed.
 
 ### Instructor Dashboard
-![Alt text](img/Instructor-Dashboard.png?raw=true "Instructor Dashboard")
+![Alt text](img/Instructor-Dashboard.png?raw=true "Instructor Dashboard Example (One Student)")
 
 ## Installation/Running the program
-Requires: Python 2.7.8 (that is what it was developed in)
-All modules used are native to python-2.7.8
+Requires: Python 2.7.8 (that is what it was developed in). There aren't any other dependencies :)
 
 Clone/Download the repository, open the folder, and run the main.py program
 ```
@@ -48,7 +47,7 @@ This phase demonstrates the simple concept of "Principle of Least Privilege". No
 This phase demonstrates the myth of "Security through Obfuscation". The idea of the phase is to find the hidden file (hidden because the filename includes a "." before the name) somewhere in the file system. Then, the goal is to find the password hidden within the discovered file. The linux command "ls" can now use the "-a" flag to list hidden files and the phase also includes the new command "grep" for searching through file contents.
 
 ### Phase 3 (Strong Passwords) -- TODO
-This phase teaches students how to execute programs/scripts in the Linux file system. The script that the students execute is a "testPassword.py" script that takes a "password" as a command line argument and calculates how long a computer requires to brute-force the password provided.
+This phase teaches students how to use the command line tool "hashcat" in a very basic way and demonstrates why secure passwords are important by asking students to use hashcat to crack password hashes.
 
 ### Phase 4 (Encrypt! Encrypt! Encrypt!) -- TODO
 This phase teaches students the "tcpdump" application and demonstrates to students how network traffic can be sniffed. Students are asked to compare encrypted vs. unencrypted traffic.
